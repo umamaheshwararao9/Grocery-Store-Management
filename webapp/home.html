@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            position: relative;
+        }
+
+        /* Three-dot menu icon styles */
+        .three-dots {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 18px;
+        }
+
+        .three-dots div {
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .con {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .block {
+            height: 350px;
+            width: 30%;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            border-radius: 8px;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .block:hover {
+            transform: scale(1.05);
+        }
+
+        .block1 {
+            background-color: #4CAF50; /* Green */
+        }
+
+        .block2 {
+            background-color: #2196F3; /* Blue */
+        }
+
+        .block3 {
+            background-color: #FF5722; /* Orange */
+        }
+
+        /* Main content styles */
+        main {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Link styles */
+        .three-dots a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Welcome to Grocery Store Management
+        <!-- Three-dot Menu Icon -->
+        <a id="three-dots-link" class="three-dots" href="emp_del.jsp">
+            <div></div>
+            <div></div>
+            <div></div>
+        </a>
+    </header>
+    <main>
+        <h1>Welcome to the Home Page!</h1>
+        <p>Your ID is: <span id="userId"></span></p>
+        <div class="con">
+            <div class="block block1" id="block1">
+                Todays billing
+            </div>
+            <div class="block block2" id="block2">
+                New Order
+            </div>
+            <div class="block block3">Alerts</div>
+        </div>
+    </main>
+    <footer>
+        &copy; 2024 Grocery Store Management. All rights reserved.
+    </footer>
+
+    <script>
+        // Retrieve the ID from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        // Display the user ID on the page
+        document.getElementById('userId').textContent = userId;
+
+        // Set a cookie with the user ID
+        if (userId) {
+            document.cookie = `userId=${userId}; path=/`;
+
+            // Update the link with the ID
+            const link = document.getElementById('three-dots-link');
+            link.href = `emp_del.jsp`;
+        }
+
+        // Add click event to the first block
+        document.getElementById('block1').addEventListener('click', function() {
+            var a = window.location.search;
+            const urlParams = new URLSearchParams(a);
+
+            // Extract parameters
+            const param1 = urlParams.get("id");
+            console.log(param1);
+            window.location.href = 'todays_billing.jsp?empId=' + param1;
+        });
+
+        // Add click event to the second block for New Order
+        document.getElementById('block2').addEventListener('click', function() {
+            // Make an AJAX request to check_order_id.jsp
+            fetch('check_order_id.jsp')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.number);
+
+                    // Assuming the response contains the order ID
+                    if (data.number) {
+                        window.location.href = "new_order.jsp?userId=" + userId + "&orderId=" + data.number;
+                    } else {
+                        console.error('Failed to retrieve order ID');
+                    }
+                })
+                .catch(error => {
+                    console.log("hi");
+                    console.error('Error fetching order ID:', error);
+                });
+        });
+     // Add click event to the third block for Alerts
+        document.querySelector('.block3').addEventListener('click', function() {
+            const userId = urlParams.get('id');
+            window.location.href = `alerts.jsp?id=${userId}`;
+        });
+
+    </script>
+</body>
+</html>
